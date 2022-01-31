@@ -1,0 +1,95 @@
+# This data was sourced from https://data.humdata.org/dataset/unicef-gn-unmply
+
+import pandas as pd
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+
+# Read  the file
+
+df = pd.read_csv('GENDER.csv')
+
+# To declutter the dataframe
+
+df_f1 = df.drop(columns = ['Education Level', 'AGE', 'EDUCATION_LEVEL', 'SERIES_FOOTNOTE', 'OBS_CONF', 'SOWC_FLAG_A', 
+                           'TIME_PERIOD_METHOD','FREQ_COLL', 'UNIT_MULTIPLIER','OBS_FOOTNOTE', 'DATA_SOURCE', 'UNIT_MEASURE'])
+
+df_f1 = df_f1[(~(df['Sex'] == 'Total'))&(~(df['Residence'] == 'Total'))]
+
+# Creating a dataframe for West Africa
+
+df_West_Africa = df_f1[(df_f1['Geographic area'] == 'Nigeria')|(df_f1['Geographic area'] == 'Ghana')
+                          |(df_f1['Geographic area'] == 'Benin')	|(df_f1['Geographic area'] == 'Burkina Faso')
+                          |(df_f1['Geographic area'] == 'Cape Verde')|(df_f1['Geographic area'] == 'Gambia')
+                          |(df_f1['Geographic area'] == 'Guinea')|(df_f1['Geographic area'] == 'Guinea-Bissau')
+                          |(df_f1['Geographic area'] == 'Liberia')	|(df_f1['Geographic area'] == 'Mali')
+                          |(df_f1['Geographic area'] == 'Mauritania')|(df_f1['Geographic area'] == 'Niger')
+                          |(df_f1['Geographic area'] == 'Senegal')	|(df_f1['Geographic area'] == 'Sierra Leone')	
+                          |(df_f1['Geographic area'] == 'Togo')| (df_f1['REF_AREA'] == 'CIV')]
+
+          
+# For Males residing in West African Urban areas 
+df_WA_UrbanMen = df_West_Africa[(df_West_Africa['SEX']=='M') & (df_West_Africa['Residence']== 'Urban')]
+df_WA_UrbanMen.plot(y = 'OBS_VALUE', x = 'Geographic area', kind= 'bar', color ='green', figsize = (10,8))
+
+
+# For Females residing in West African Urban areas
+
+df_WA_UrbanWomen= df_West_Africa[(df_West_Africa['SEX']=='F') & (df_West_Africa['Residence']== 'Urban')]
+df_WA_UrbanWomen.plot(y = 'OBS_VALUE', x = 'Geographic area', kind= 'bar', color ='brown', figsize = (10,8))
+
+
+
+# For Males residing in West African Rural areas
+
+df_WA_RuralMen= df_West_Africa[(df_West_Africa['SEX']=='M') & (df_West_Africa['Residence']== 'Rural')]
+df_WA_RuralMen.plot(y = 'OBS_VALUE', x = 'Geographic area', kind= 'bar', color ='orange', figsize = (10,8))
+
+# For Females residing in West African Rural areas
+
+df_WA_RuralWomen= df_West_Africa[(df_West_Africa['SEX']=='F') & (df_West_Africa['Residence']== 'Rural')]
+df_WA_RuralWomen.plot(y = 'OBS_VALUE', x = 'Geographic area', kind= 'bar', color ='blue', figsize = (10,8))
+
+
+# Unemployment in West African Rural and Urban areas by Sex
+
+ax = sns.catplot(data= df_West_Africa, kind= 'bar', x= 'Geographic area', y= 'OBS_VALUE', hue ='Sex')
+ax.figure.set_size_inches(20,8)
+#plt.ylabel("")
+plt.title("Unemployment in West African Rural and Urban areas by Sex")
+
+# Unemployment in West African Rural and Urban areas by Locality
+
+ax = sns.catplot(data= df_West_Africa, kind= 'bar', x= 'Geographic area', y= 'OBS_VALUE', hue ='Residence')
+#plt.ylabel("")
+ax.figure.set_size_inches(20,8)
+plt.title("Unemployment in West African Rural and Urban areas by Locality")
+
+# PIE CHARTS
+
+# Unemployment among men in Rural West Africa
+
+df_WA_PieChart1 = df_West_Africa[(df['Residence']=='Rural')&(df['SEX']=='M')]
+
+df_WA_PieChart1.plot(y='OBS_VALUE', kind='pie', figsize=(40,10), label= 'Unemployment among men in Rural West Africa', labels = df_WA_PieChart1['Geographic area'])
+
+
+# Unemployment among women in Rural West Africa
+
+df_WA_PieChart2 = df_West_Africa[(df['Residence']=='Rural')&(df['SEX']=='F')]
+
+df_WA_PieChart2.plot(y='OBS_VALUE', kind='pie', figsize=(40,10), label= 'Unemployment among women in Rural West Africa', labels = df_WA_PieChart2['Geographic area'])
+
+
+
+# Unemployment among men in Urban West Africa
+
+df_WA_PieChart3 = df_West_Africa[(df['Residence']=='Urban')&(df['SEX']=='M')]
+df_WA_PieChart3.plot(y='OBS_VALUE', kind='pie', figsize=(40,10), label= 'Unemployment among men in Urban West Africa', labels = df_WA_PieChart3['Geographic area'])
+
+
+# Unemployment among women in Urban West Africa
+
+df_WA_PieChart4 = df_West_Africa[(df['Residence']=='Urban')&(df['SEX']=='F')]
+df_WA_PieChart4.plot(y='OBS_VALUE', kind='pie', figsize=(40,10), label= 'Unemployment among women in Urban West Africa', labels = df_WA_PieChart4["Geographic area"])
